@@ -67,7 +67,7 @@ def generate(input_file):
             continue
         if s == '---': continue
         if s.startswith('# '): title_text = normalize_keep_colon(s[2:]); continue
-        if s.startswith('**[你的姓名]') or s.startswith('[你的姓名]'): continue
+        if s.startswith('**你的姓名**') or s.startswith('你的姓名'): continue
         if s == '## 摘要': in_abstract = True; continue
         if s.startswith('关键词'):
             keywords_line = normalize_punctuation(s.replace('**','').replace('关键词：','').replace('关键词','').replace('：','').strip())
@@ -184,14 +184,14 @@ def generate(input_file):
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(8)
     set_multiline(p, 1.16)
-    add_mixed_run(p, '[你的姓名]', cn_font='仿宋', size_pt=14)
+    add_mixed_run(p, '你的姓名', cn_font='仿宋', size_pt=14)
 
     # 单位
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(8)
     set_multiline(p, 1.16)
-    add_mixed_run(p, '（[你的学校] [你的学院]，[城市] [邮编]）', cn_font='宋体', size_pt=9)
+    add_mixed_run(p, '(你的学校 你的学院, 城市 邮编)', cn_font='宋体', size_pt=9)
 
     # 摘要
     p = doc.add_paragraph()
