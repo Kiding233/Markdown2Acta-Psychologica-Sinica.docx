@@ -93,6 +93,11 @@ def generate(input_file):
                 body_sections.append((current_level, current_title, current_content))
             current_level = "h3"; current_title = normalize_keep_colon(s[4:]); current_content = []
             continue
+        if s.startswith('#### '):
+            if current_title:
+                body_sections.append((current_level, current_title, current_content))
+            current_level = "h4"; current_title = normalize_keep_colon(s[5:]); current_content = []
+            continue
         s = normalize_punctuation(s.replace('**', '').replace('*', ''))
         current_content.append(s)
     if current_title:
@@ -225,10 +230,10 @@ def generate(input_file):
     cols.set(qn('w:equalWidth'), '1')
     sec1._sectPr.append(cols)
 
-    h1_num = 0; h2_num = 0
+    h1_num = 0; h2_num = 0; h3_num = 0
     for level, title, content_lines in body_sections:
         if level == "h2":
-            h1_num += 1; h2_num = 0
+            h1_num += 1; h2_num = 0; h3_num = 0
             desc = title.split(" ", 1)[-1] if " " in title else title
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(6)
@@ -236,8 +241,8 @@ def generate(input_file):
             p.paragraph_format.first_line_indent = Cm(0)
             set_multiline(p, 1.16)
             add_text_with_italics(p, str(h1_num) + '  ' + desc, cn_font='宋体', size_pt=14)
-        else:
-            h2_num += 1
+        elif level == "h3":
+            h2_num += 1; h3_num = 0
             desc = title.split(" ", 1)[-1] if " " in title else title
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(3)
@@ -245,6 +250,15 @@ def generate(input_file):
             p.paragraph_format.first_line_indent = Cm(0)
             set_multiline(p, 1.16)
             add_text_with_italics(p, str(h1_num) + '.' + str(h2_num) + '  ' + desc, cn_font='黑体', size_pt=10.5)
+        else:  # h4
+            h3_num += 1
+            desc = title.split(" ", 1)[-1] if " " in title else title
+            p = doc.add_paragraph()
+            p.paragraph_format.space_before = Pt(3)
+            p.paragraph_format.space_after = Pt(0)
+            p.paragraph_format.first_line_indent = Cm(0)
+            set_multiline(p, 1.16)
+            add_text_with_italics(p, str(h1_num) + '.' + str(h2_num) + '.' + str(h3_num) + '  ' + desc, cn_font='黑体', size_pt=10.5)
         for cline in content_lines:
             cline = cline.strip()
             if not cline: continue
